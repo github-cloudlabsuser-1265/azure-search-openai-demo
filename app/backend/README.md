@@ -1,16 +1,36 @@
-# Backend Service Documentation
+# Azure Search + OpenAI Demo Backend
 
-This backend is part of the Azure Search + OpenAI Demo. It provides RESTful APIs for chat, Q&A, file management, and integration with Azure AI services, including Azure Cognitive Search, Azure OpenAI, and Azure Storage. The backend is built with [Quart](https://pgjones.gitlab.io/quart/), an async Python web framework compatible with Flask, and is designed for cloud-native, scalable deployments.
+[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](../../actions)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](../../LICENSE)
+[![Python](https://img.shields.io/badge/python-3.11%2B-blue)](https://www.python.org/)
+
+## Project Overview
+
+This backend powers the Azure Search + OpenAI Demo, enabling advanced retrieval-augmented generation (RAG), chat, Q&A, and file management with seamless integration to Azure AI services. It is designed for cloud-native deployments and local development, supporting both enterprise and research scenarios.
+
+## Architecture & Technology Stack
+
+- **Framework:** [Quart](https://pgjones.gitlab.io/quart/) (async Flask-compatible)
+- **Cloud Services:** Azure Cognitive Search, Azure OpenAI, Azure Blob Storage, Azure AD, CosmosDB (optional)
+- **Containerization:** Docker support for easy deployment
+- **Authentication:** Azure AD (with support for managed identity and local dev)
+- **Other:** Streaming, agentic retrieval, vision (GPT-4V), and speech (Azure Speech)
+
+```
++-------------------+         +-------------------+         +-------------------+
+|   Frontend (UI)   | <-----> |   Backend (Quart) | <-----> |   Azure Services  |
++-------------------+         +-------------------+         +-------------------+
+```
 
 ## Features
 
-- **Chat and Q&A APIs**: Multi-turn chat and single-turn Q&A endpoints powered by Azure OpenAI and Azure Cognitive Search.
-- **User File Uploads**: Secure file upload, listing, and deletion for authenticated users, with ingestion into Azure Storage and search index.
-- **Vision and Speech**: Optional support for GPT-4V (vision) and Azure Speech Services for text-to-speech.
-- **Authentication**: Azure AD-based authentication and access control, with support for global and per-user document access.
-- **Agentic Retrieval**: Optional agent-based retrieval using Azure Cognitive Search Knowledge Agents.
-- **Streaming Responses**: Supports streaming chat responses for real-time UX.
-- **Cloud Native**: Designed for Azure App Service, Container Apps, and local development with Azure Developer CLI authentication.
+- **Chat and Q&A APIs:** Multi-turn chat and single-turn Q&A endpoints powered by Azure OpenAI and Azure Cognitive Search.
+- **User File Uploads:** Secure file upload, listing, and deletion for authenticated users, with ingestion into Azure Storage and search index.
+- **Vision and Speech:** Optional support for GPT-4V (vision) and Azure Speech Services for text-to-speech.
+- **Authentication:** Azure AD-based authentication and access control, with support for global and per-user document access.
+- **Agentic Retrieval:** Optional agent-based retrieval using Azure Cognitive Search Knowledge Agents.
+- **Streaming Responses:** Supports streaming chat responses for real-time UX.
+- **Cloud Native:** Designed for Azure App Service, Container Apps, and local development with Azure Developer CLI authentication.
 
 ## Directory Structure
 
@@ -23,18 +43,27 @@ This backend is part of the Azure Search + OpenAI Demo. It provides RESTful APIs
 - `chat_history/` — CosmosDB-based chat history support.
 - `prepdocslib/` — Utilities for file parsing, embeddings, and ingestion.
 
+## Prerequisites
+
+- Python 3.11+
+- Azure Subscription with Cognitive Search, OpenAI, and Storage resources
+- (Optional) Azure CosmosDB for chat history
+- Docker (for containerized deployment)
+
 ## API Endpoints (Summary)
 
-- `POST /ask` — Single-turn Q&A.
-- `POST /chat` — Multi-turn chat.
-- `POST /chat/stream` — Streaming chat responses.
-- `POST /upload` — Upload a file (authenticated).
-- `GET /list_uploaded` — List user-uploaded files.
-- `POST /delete_uploaded` — Delete a user-uploaded file.
-- `GET /content/<path>` — Download content files (authenticated).
-- `POST /speech` — Text-to-speech (if enabled).
-- `GET /auth_setup` — Get authentication config for the frontend.
-- `GET /config` — Get feature flags/config for the frontend.
+| Endpoint                | Method | Description                                      |
+|-------------------------|--------|--------------------------------------------------|
+| `/ask`                  | POST   | Single-turn Q&A                                  |
+| `/chat`                 | POST   | Multi-turn chat                                  |
+| `/chat/stream`          | POST   | Streaming chat responses                         |
+| `/upload`               | POST   | Upload a file (authenticated)                    |
+| `/list_uploaded`        | GET    | List user-uploaded files                         |
+| `/delete_uploaded`      | POST   | Delete a user-uploaded file                      |
+| `/content/<path>`       | GET    | Download content files (authenticated)           |
+| `/speech`               | POST   | Text-to-speech (if enabled)                      |
+| `/auth_setup`           | GET    | Get authentication config for the frontend       |
+| `/config`               | GET    | Get feature flags/config for the frontend        |
 
 ## Environment Variables
 
@@ -77,11 +106,22 @@ See `app.py` for the full list and usage.
 - Designed for Azure App Service, Azure Container Apps, or any containerized environment.
 - Uses managed identity or Azure Developer CLI authentication for secure, passwordless access to Azure resources.
 
+## Troubleshooting & Support
+
+- Check logs for errors (Quart, Gunicorn, or Azure App Service logs)
+- Ensure all required environment variables are set
+- For Azure authentication, use `azd auth login` for local dev or managed identity in production
+- See the [docs/](../../docs/) folder for more guides and troubleshooting tips
+
 ## Extending
 
 - Add new approaches in `approaches/` for custom retrieval or chat logic.
 - Extend authentication or session logic in `core/`.
 - Add new file parsers or ingestion strategies in `prepdocslib/`.
+
+## Contributing
+
+Contributions are welcome! Please see [CONTRIBUTING.md](../../CONTRIBUTING.md) for guidelines.
 
 ## License
 
